@@ -44,6 +44,8 @@
     <string name="settings">Settings</string>
 
     <string name="emphasize_first_beat">Emphasize first beat</string>
+    <string name="tempo_tap_amount">Tempo taps</string>
+    <string name="tempo_tap_amount_summary">Average tempo over %1$d taps</string>
 
     <string name="display">Display</string>
     <string name="night_mode">Theme</string>

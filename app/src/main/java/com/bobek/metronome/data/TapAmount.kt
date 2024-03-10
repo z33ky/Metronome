@@ -1,6 +1,6 @@
 /*
  * This file is part of Metronome.
- * Copyright (C) 2023 Philipp Bobek <philipp.bobek@mailbox.org>
+ * Copyright (C) 2023 Alexander Hirsch <1zeeky@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,26 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.bobek.metronome.preference
+package com.bobek.metronome.data
 
-object PreferenceConstants {
+import androidx.databinding.InverseMethod
 
-    const val BEATS = "beats"
+data class TempoTapAmount(val value: Int = DEFAULT) {
 
-    const val SUBDIVISIONS = "subdivisions"
+    init {
+        require(value in MIN..MAX) { "value must be between $MIN and $MAX but was $value" }
+    }
 
-    const val TEMPO = "tempo"
+    companion object {
+        const val MIN = 2
+        const val MAX = 8
+        const val DEFAULT = 4
 
-    const val EMPHASIZE_FIRST_BEAT = "emphasize_first_beat"
+        @InverseMethod("floatToTempoTapAmount")
+        @JvmStatic
+        fun tempoTapAmountToFloat(tempoTapAmount: TempoTapAmount): Float = tempoTapAmount.value.toFloat()
 
-    const val NIGHT_MODE = "night_mode"
-    const val NIGHT_MODE_VALUE_FOLLOW_SYSTEM = "follow_system"
-    const val NIGHT_MODE_VALUE_NO = "no"
-    const val NIGHT_MODE_VALUE_YES = "yes"
-
-    const val POST_NOTIFICATIONS_PERMISSION_REQUESTED = "post_notifications_permission_requested"
-
-    const val TAP_AMOUNT = "tempo_tap_amount"
-
-    const val VERSION = "version"
+        @JvmStatic
+        fun floatToTempoTapAmount(float: Float): TempoTapAmount = TempoTapAmount(float.toInt())
+    }
 }
+

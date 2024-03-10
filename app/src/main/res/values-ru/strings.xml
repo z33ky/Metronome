@@ -44,6 +44,8 @@
     <string name="settings">Настройки</string>
 
     <string name="emphasize_first_beat">Подчеркнуть первый бит</string>
+    <!--TODO<string name="tempo_tap_amount">Tempo taps</string>-->
+    <!--TODO<string name="tempo_tap_amount_summary">Average tempo over %1$d taps</string>-->
 
     <string name="display">Дисплей</string>
     <string name="night_mode">Ночной режим</string>

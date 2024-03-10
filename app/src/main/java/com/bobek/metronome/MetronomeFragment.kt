@@ -35,11 +35,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import com.bobek.metronome.data.Tempo
+import com.bobek.metronome.data.TempoTapAmount
 import com.bobek.metronome.data.Tick
 import com.bobek.metronome.data.TickType
 import com.bobek.metronome.databinding.FragmentMetronomeBinding
 import com.bobek.metronome.view.component.TickVisualization
 import com.bobek.metronome.view.model.MetronomeViewModel
+import java.util.ArrayDeque
 
 private const val TAG = "MetronomeFragment"
 private const val LARGE_TEMPO_CHANGE_SIZE = 10
@@ -52,7 +54,9 @@ class MetronomeFragment : Fragment() {
     private lateinit var binding: FragmentMetronomeBinding
 
     private var optionsMenu: Menu? = null
+
     private var lastTap: Long = 0
+    private var tapTempoQueue = ArrayDeque<Int>(TempoTapAmount.MAX)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMetronomeBinding.inflate(inflater, container, false)
@@ -122,18 +126,46 @@ class MetronomeFragment : Fragment() {
 
     private fun tapTempo() {
         val currentTime = System.currentTimeMillis()
-        val tempoValue = calculateTapTempo(lastTap, currentTime)
+        val newTempoValue = calculateTapTempo(lastTap, currentTime)
+        addToTapTempoQueue(newTempoValue)
 
-        if (tempoValue > Tempo.MAX) {
-            viewModel.tempoData.value = Tempo(Tempo.MAX)
-        } else if (tempoValue >= Tempo.MIN) {
-            viewModel.tempoData.value = Tempo(tempoValue)
-        }
+        val tempoValue = calculateCurrentTapTempo()
+        tempoValue?.let { viewModel.tempoData.value = Tempo(it) }
 
         lastTap = currentTime
     }
 
+    private fun addToTapTempoQueue(newValue: Int) {
+        if (newValue < Tempo.MIN) {
+            tapTempoQueue.clear()
+            return
+        }
+
+        val maxQueueSize = viewModel.tempoTapAmount.value?.value?.minus(1)
+        if (maxQueueSize == null) {
+            Log.e(TAG, "Unable to obtain tempoTapAmount value")
+            return
+        }
+        while (tapTempoQueue.size >= maxQueueSize) {
+            tapTempoQueue.remove()
+        }
+
+        if (newValue > Tempo.MAX) {
+            tapTempoQueue.add(Tempo.MAX)
+        } else {
+            tapTempoQueue.add(newValue)
+        }
+    }
+
     private fun calculateTapTempo(firstTap: Long, secondTap: Long): Int = (60_000 / (secondTap - firstTap)).toInt()
+
+    private fun calculateCurrentTapTempo(): Int? {
+        if (tapTempoQueue.isEmpty()) {
+            return null
+        } else {
+            return tapTempoQueue.average().toInt()
+        }
+    }
 
     private fun tapTempoOnTouchListener(view: View, event: MotionEvent): Boolean {
         when (event.action) {

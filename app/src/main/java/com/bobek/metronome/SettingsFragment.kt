@@ -21,7 +21,10 @@ package com.bobek.metronome
 import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.Preference.SummaryProvider
+import androidx.preference.PreferenceDialogFragmentCompat
 import androidx.preference.PreferenceFragmentCompat
+import ch.poole.android.numberpickerpreference.NumberPickerPreference
+import ch.poole.android.numberpickerpreference.NumberPickerPreferenceFragment
 import com.bobek.metronome.preference.PreferenceConstants
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -31,5 +34,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         findPreference<Preference>(PreferenceConstants.VERSION)?.summaryProvider =
             SummaryProvider<Preference> { BuildConfig.VERSION_NAME }
+    }
+
+    companion object {
+        private const val DIALOG_FRAGMENT_TAG = "androidx.preference.PreferenceFragment.DIALOG";
+    }
+
+    override fun onDisplayPreferenceDialog(preference: Preference) {
+        var f: PreferenceDialogFragmentCompat? = null;
+
+        if (preference is NumberPickerPreference) {
+            f = NumberPickerPreferenceFragment.newInstance(preference.getKey())
+        }
+
+        if (f != null) {
+            f.setTargetFragment(this, 0)
+            f.show(getParentFragmentManager(), DIALOG_FRAGMENT_TAG)
+        } else {
+            super.onDisplayPreferenceDialog(preference);
+        }
     }
 }

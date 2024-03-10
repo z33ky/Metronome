@@ -84,6 +84,7 @@ class MainActivity : AppCompatActivity() {
         preferenceStore.tempo.observe(this) { viewModel.tempoData.value = it }
         preferenceStore.emphasizeFirstBeat.observe(this) { viewModel.emphasizeFirstBeat.value = it }
         preferenceStore.nightMode.observe(this) { setNightMode(it) }
+        preferenceStore.tempoTapAmount.observe(this) { viewModel.tempoTapAmount.value = it }
     }
 
     private fun setNightMode(appNightMode: AppNightMode) {

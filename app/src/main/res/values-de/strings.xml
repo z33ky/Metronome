@@ -44,6 +44,8 @@
     <string name="settings">Einstellungen</string>
 
     <string name="emphasize_first_beat">Ersten Schlag betonen</string>
+    <string name="tempo_tap_amount">Tempo Einschlag-Anzahl</string>
+    <string name="tempo_tap_amount_summary">Tempo über %1$d Schläge mitteln</string>
 
     <string name="display">Anzeige</string>
     <string name="night_mode">Design</string>

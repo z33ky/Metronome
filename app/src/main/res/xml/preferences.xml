@@ -31,6 +31,14 @@
                 app:title="@string/emphasize_first_beat"
                 app:defaultValue="true" />
 
+        <ch.poole.android.numberpickerpreference.NumberPickerPreference
+                app:key="tempo_tap_amount"
+                app:title="@string/tempo_tap_amount"
+                app:spt_currentValueText="@string/tempo_tap_amount_summary"
+                app:spt_minValue="2"
+                app:spt_maxValue="8"
+                app:defaultValue="4" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

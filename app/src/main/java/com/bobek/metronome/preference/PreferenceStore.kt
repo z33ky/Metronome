@@ -30,6 +30,7 @@ import com.bobek.metronome.data.AppNightMode
 import com.bobek.metronome.data.Beats
 import com.bobek.metronome.data.Subdivisions
 import com.bobek.metronome.data.Tempo
+import com.bobek.metronome.data.TempoTapAmount
 
 private const val TAG = "PreferenceStore"
 
@@ -41,6 +42,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
     val emphasizeFirstBeat = MutableLiveData<Boolean>()
     val nightMode = MutableLiveData<AppNightMode>()
     val postNotificationsPermissionRequested = MutableLiveData<Boolean>()
+    val tempoTapAmount = MutableLiveData<TempoTapAmount>()
 
     private val preferenceStoreLifecycleObserver = PreferenceStoreLifecycleObserver()
 
@@ -52,6 +54,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
     private val emphasizeFirstBeatObserver = getEmphasizeFirstBeatObserver()
     private val nightModeObserver = getNightModeObserver()
     private val postNotificationsPermissionRequestedObserver = getPostNotificationsPermissionRequestedObserver()
+    private val tempoTapAmountObserver = getTempoTapAmountObserver()
 
     private val sharedPreferences: SharedPreferences
 
@@ -64,6 +67,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
         updateEmphasizeFirstBeat()
         updateNightMode()
         updatePostNotificationsPermissionRequested()
+        updateTempoTapAmount()
 
         lifecycle.addObserver(preferenceStoreLifecycleObserver)
     }
@@ -77,6 +81,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
             emphasizeFirstBeat.observeForever(emphasizeFirstBeatObserver)
             nightMode.observeForever(nightModeObserver)
             postNotificationsPermissionRequested.observeForever(postNotificationsPermissionRequestedObserver)
+            tempoTapAmount.observeForever(tempoTapAmountObserver)
 
             sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener)
         }
@@ -90,6 +95,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
             emphasizeFirstBeat.removeObserver(emphasizeFirstBeatObserver)
             nightMode.removeObserver(nightModeObserver)
             postNotificationsPermissionRequested.removeObserver(postNotificationsPermissionRequestedObserver)
+            tempoTapAmount.removeObserver(tempoTapAmountObserver)
         }
     }
 
@@ -102,6 +108,7 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
                 PreferenceConstants.EMPHASIZE_FIRST_BEAT -> updateEmphasizeFirstBeat()
                 PreferenceConstants.NIGHT_MODE -> updateNightMode()
                 PreferenceConstants.POST_NOTIFICATIONS_PERMISSION_REQUESTED -> updatePostNotificationsPermissionRequested()
+                PreferenceConstants.TAP_AMOUNT -> updateTempoTapAmount()
             }
         }
     }
@@ -156,6 +163,14 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
         }
     }
 
+    private fun updateTempoTapAmount() {
+        val storedValue = sharedPreferences.getInt(PreferenceConstants.TAP_AMOUNT, TempoTapAmount.DEFAULT)
+        val storedTempoTapAmount = TempoTapAmount(storedValue)
+        if (tempoTapAmount.value != storedTempoTapAmount) {
+            tempoTapAmount.value = storedTempoTapAmount
+        }
+    }
+
     private fun getBeatsObserver(): (t: Beats) -> Unit = {
         val edit = sharedPreferences.edit()
         edit.putInt(PreferenceConstants.BEATS, it.value)
@@ -196,5 +211,12 @@ class PreferenceStore(context: Context, lifecycle: Lifecycle) {
         edit.putBoolean(PreferenceConstants.POST_NOTIFICATIONS_PERMISSION_REQUESTED, it)
         edit.apply()
         Log.d(TAG, "Persisted postNotificationsPermissionRequested: $it")
+    }
+
+    private fun getTempoTapAmountObserver(): (t: TempoTapAmount) -> Unit = {
+        val edit = sharedPreferences.edit()
+        edit.putInt(PreferenceConstants.TAP_AMOUNT, it.value)
+        edit.apply()
+        Log.d(TAG, "Persisted tempoTapAmount: ${it.value}")
     }
 }

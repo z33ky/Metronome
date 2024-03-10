@@ -44,6 +44,8 @@
     <string name="settings">Configurações</string>
 
     <string name="emphasize_first_beat">Enfatizar primeira batida</string>
+    <!--TODO<string name="tempo_tap_amount">Tempo taps</string>-->
+    <!--TODO<string name="tempo_tap_amount_summary">Average tempo over %1$d taps</string>-->
 
     <string name="display">Tela</string>
     <string name="night_mode">Tema</string>
